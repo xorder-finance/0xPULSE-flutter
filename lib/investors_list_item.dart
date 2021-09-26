@@ -201,7 +201,7 @@ class _InvestorsListItemState extends State<InvestorsListItem> {
                         getTooltipItems: (touchedSpots) {
                           return touchedSpots
                               .map((e) => LineTooltipItem(
-                                  "${e.y.toStringAsFixed(2)} eth",
+                                  "${e.y.toStringAsFixed(2)} \$",
                                   TextStyle(
                                     color: Theme.of(context).primaryColor,
                                     fontFamily: "Graphik",
@@ -375,7 +375,7 @@ class _InvestorsListItemState extends State<InvestorsListItem> {
                                   style: TextStyle(
                                       color: Colors.black.withOpacity(0.5),
                                       fontFamily: "Graphik",
-                                      fontSize: 8),
+                                      fontSize: 10),
                                 ),
                               ],
                             ),

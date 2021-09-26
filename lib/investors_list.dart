@@ -62,7 +62,7 @@ class _InvestorsListState extends State<InvestorsList> {
       );
     }
     return ListView.builder(
-      physics: const BouncingScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: investorsList.length,
       itemBuilder: (context, index) {
