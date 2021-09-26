@@ -1,1 +1,1 @@
-const tachkaAddress = "http://185.241.53.33:8000";
+const tachkaAddress = "http://89.208.211.66:8000";
