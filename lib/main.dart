@@ -1,6 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:zeroin/investors_list.dart';
+import 'package:zeroin/investors_list_item.dart';
+import 'package:zeroin/model/constants.dart';
+import 'package:zeroin/model/investor.dart';
 
 import 'model/connector.dart' if (dart.library.html) 'model/connector_web.dart';
 
@@ -17,8 +23,23 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool investorMode = false;
-  TextEditingController twitterController =
-      TextEditingController(text: "@scaptaincap");
+  TextEditingController twitterController = TextEditingController(text: "");
+  TextEditingController searchController = TextEditingController(text: "");
+  bool canSearch = false;
+  Investor? investor;
+
+  void loadInvestor() async {
+    final address = searchController.text.toLowerCase();
+
+    final profit = jsonDecode((await http
+            .get(Uri.parse("$tachkaAddress/api/blockchain/profit/$address")))
+        .body);
+
+    setState(() {
+      investor =
+          Investor(twitterId: "UnknownTwitter", address: address, percent: profit);
+    });
+  }
 
   List<Widget> defaultModeWidget(BuildContext context) {
     return [
@@ -60,7 +81,59 @@ class _MyAppState extends State<MyApp> {
           ],
         ),
       const SizedBox(height: 16),
-      const InvestorsList(),
+      InvestorsList(
+        onLoad: () {
+          setState(() {
+            canSearch = true;
+          });
+        },
+      ),
+      if (canSearch)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
+              TextField(
+                controller: searchController,
+                decoration: const InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(borderSide: BorderSide()),
+                    label: Text("Find any other investor by wallet"),
+                    hintText: "0xdead...beaf"),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () {
+                    loadInvestor();
+                  },
+                  style: TextButton.styleFrom(
+                      padding: const EdgeInsets.all(16),
+                      backgroundColor: Theme.of(context).primaryColor),
+                  child: const Text(
+                    "Search",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              if (investor != null)
+                Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    InvestorsListItem(
+                      key: ValueKey(investor!.address),
+                      investor: investor!,
+                      isExpanded: true,
+                      onExpandRequired: () {},
+                    ),
+                  ],
+                )
+            ],
+          ),
+        ),
       const SizedBox(height: 50),
     ];
   }
@@ -86,8 +159,11 @@ class _MyAppState extends State<MyApp> {
       ),
       const SizedBox(height: 16),
       TextButton(
-        onPressed: () {
-          connectWeb3(twitterController.text);
+        onPressed: () async {
+          await connectWeb3(twitterController.text);
+          setState(() {
+            investorMode = false;
+          });
         },
         style: TextButton.styleFrom(
             padding: const EdgeInsets.all(16),

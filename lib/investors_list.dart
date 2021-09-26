@@ -8,7 +8,9 @@ import 'package:zeroin/model/constants.dart';
 import 'package:zeroin/model/investor.dart';
 
 class InvestorsList extends StatefulWidget {
-  const InvestorsList({Key? key}) : super(key: key);
+  final VoidCallback onLoad;
+
+  const InvestorsList({Key? key, required this.onLoad}) : super(key: key);
 
   @override
   _InvestorsListState createState() => _InvestorsListState();
@@ -43,6 +45,7 @@ class _InvestorsListState extends State<InvestorsList> {
               percent: percents[index]))
           .toList();
     });
+    widget.onLoad();
   }
 
   @override
