@@ -20,8 +20,7 @@ class _MyAppState extends State<MyApp> {
   TextEditingController twitterController =
       TextEditingController(text: "@scaptaincap");
 
-  List<Widget> defaultModeWidget() {
-    print(Theme.of(context).colorScheme.secondary);
+  List<Widget> defaultModeWidget(BuildContext context) {
     return [
       const SizedBox(height: 50),
       RichText(
@@ -66,7 +65,7 @@ class _MyAppState extends State<MyApp> {
     ];
   }
 
-  List<Widget> investorModeWidget() {
+  List<Widget> investorModeWidget(BuildContext context) {
     return [
       const SizedBox(height: 50),
       TextButton(
@@ -110,7 +109,7 @@ class _MyAppState extends State<MyApp> {
                 primary: Color(0xFF03A9F4), secondary: Color(0xFFFF5722))),
         home: Scaffold(
             body: SingleChildScrollView(
-          child: Container(
+          child: SizedBox(
             width: double.infinity,
             child: Column(
               children: [
@@ -122,8 +121,8 @@ class _MyAppState extends State<MyApp> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: investorMode
-                            ? investorModeWidget()
-                            : defaultModeWidget()),
+                            ? investorModeWidget(context)
+                            : defaultModeWidget(context)),
                   );
                 }),
               ],

@@ -53,7 +53,16 @@ class _InvestorsListState extends State<InvestorsList> {
 
   @override
   Widget build(BuildContext context) {
+    if (investorsList.isEmpty) {
+      return const SizedBox(
+        height: 300,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return ListView.builder(
+      physics: const BouncingScrollPhysics(),
       shrinkWrap: true,
       itemCount: investorsList.length,
       itemBuilder: (context, index) {

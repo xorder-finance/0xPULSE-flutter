@@ -152,7 +152,7 @@ class _InvestorsListItemState extends State<InvestorsListItem> {
             text: const TextSpan(
               children: [
                 TextSpan(
-                    text: "Profit dynamic for ",
+                    text: "Profit dynamics for ",
                     style: TextStyle(
                         fontFamily: "Graphik",
                         fontSize: 12,
@@ -349,23 +349,38 @@ class _InvestorsListItemState extends State<InvestorsListItem> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(42),
-                            child: Image.network(
-                              "https://unavatar.io/twitter/${investor.twitterId}",
-                              height: 42,
-                              width: 42,
+                      Expanded(
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(42),
+                              child: Image.network(
+                                "https://unavatar.io/twitter/${investor.twitterId}",
+                                height: 42,
+                                width: 42,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            "@${investor.twitterId}",
-                            style: const TextStyle(
-                                fontFamily: "Graphik", fontSize: 18),
-                          ),
-                        ],
+                            const SizedBox(width: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "@${investor.twitterId}",
+                                  style: const TextStyle(
+                                      fontFamily: "Graphik", fontSize: 18),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  investor.address,
+                                  style: TextStyle(
+                                      color: Colors.black.withOpacity(0.5),
+                                      fontFamily: "Graphik",
+                                      fontSize: 8),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                       Text(
                         "${investor.percent > 0 ? "+" : ""}${investor.percent.toStringAsFixed(2)}%",
@@ -375,7 +390,14 @@ class _InvestorsListItemState extends State<InvestorsListItem> {
                                 : Colors.red,
                             fontFamily: "Graphik",
                             fontSize: 18),
-                      )
+                      ),
+                      Icon(
+                        widget.isExpanded
+                            ? Icons.expand_less
+                            : Icons.expand_more,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 24.0,
+                      ),
                     ],
                   ),
                 ),
