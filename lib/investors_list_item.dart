@@ -85,6 +85,7 @@ class _InvestorsListItemState extends State<InvestorsListItem> {
               textAlign: TextAlign.center,
               style: TextStyle(fontFamily: "Graphik", fontSize: 42)));
     }
+    final graphColor = widget.investor.percent >= 0 ? Colors.green : Colors.red;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -107,7 +108,7 @@ class _InvestorsListItemState extends State<InvestorsListItem> {
                         getTooltipItems: (touchedSpots) {
                           return touchedSpots
                               .map((e) => LineTooltipItem(
-                                  "${e.y.toStringAsFixed(2)} eth",
+                                  "${e.y.toStringAsFixed(2)}%",
                                   TextStyle(
                                     color: Theme.of(context).primaryColor,
                                     fontFamily: "Graphik",
@@ -115,22 +116,37 @@ class _InvestorsListItemState extends State<InvestorsListItem> {
                               .toList();
                         })),
                 titlesData: FlTitlesData(
-                    show: false,
+                    show: true,
                     bottomTitles: SideTitles(
+                        margin: 20,
                         showTitles: true,
-                        getTitles: (val) {
-                          final d = DateTime.fromMillisecondsSinceEpoch(
-                              val.toInt() * 1000);
-                          return "${d.day}.${d.month}";
+                        checkToShowTitle: (double minValue,
+                            double maxValue,
+                            SideTitles sideTitles,
+                            double appliedInterval,
+                            double value) {
+                          final range = (maxValue - minValue) * 0.1;
+                          return value > minValue + range &&
+                              value < maxValue - range;
                         },
-                        interval: 1000 * 60 * 60),
+                        getTitles: (val) {
+                          final tx = (15 - val) * 5;
+                          return tx.toString();
+                        },
+                        interval: 3),
                     rightTitles: SideTitles(showTitles: false),
-                    leftTitles: SideTitles(showTitles: false),
+                    leftTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 50,
+                      getTitles: (val) {
+                        return "${val.toStringAsFixed(0)}%";
+                      },
+                    ),
                     topTitles: SideTitles(showTitles: false)),
                 lineBarsData: [
                   LineChartBarData(
                     isCurved: true,
-                    colors: [Colors.green],
+                    colors: [graphColor],
                     barWidth: 2,
                     isStrokeCapRound: true,
                     dotData: FlDotData(show: false),
@@ -138,7 +154,7 @@ class _InvestorsListItemState extends State<InvestorsListItem> {
                         show: true,
                         gradientFrom: const Offset(0, 0),
                         gradientTo: const Offset(0, 1),
-                        colors: [Colors.green, Colors.green.withOpacity(0)]),
+                        colors: [graphColor, graphColor.withOpacity(0)]),
                     spots: profitData,
                   )
                 ]),
@@ -149,17 +165,17 @@ class _InvestorsListItemState extends State<InvestorsListItem> {
           padding: const EdgeInsets.all(8.0).copyWith(bottom: 0),
           child: RichText(
             textAlign: TextAlign.start,
-            text: const TextSpan(
+            text: TextSpan(
               children: [
-                TextSpan(
+                const TextSpan(
                     text: "Profit dynamics for ",
                     style: TextStyle(
                         fontFamily: "Graphik",
                         fontSize: 12,
                         color: Colors.black)),
                 TextSpan(
-                    text: "100 transactions",
-                    style: TextStyle(
+                    text: "${profitData.length * 5} transactions",
+                    style: const TextStyle(
                         fontFamily: "Graphik",
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
