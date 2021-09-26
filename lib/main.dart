@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:zeroin/investors_list.dart';
-import 'package:zeroin/model/connector.dart';
+
+import 'model/connector.dart' if (dart.library.html) 'model/connector_web.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,20 +21,24 @@ class _MyAppState extends State<MyApp> {
       TextEditingController(text: "@scaptaincap");
 
   List<Widget> defaultModeWidget() {
+    print(Theme.of(context).colorScheme.secondary);
     return [
       const SizedBox(height: 50),
       RichText(
           text: TextSpan(children: [
-        const TextSpan(
+        TextSpan(
           text: "0x",
-          style: TextStyle(fontFamily: "Graphik", fontSize: 56),
+          style: TextStyle(
+              fontFamily: "Graphik",
+              fontSize: 56,
+              color: Theme.of(context).colorScheme.secondary),
         ),
         TextSpan(
           text: "PULSE",
           style: TextStyle(
               fontFamily: "Graphik",
               fontSize: 56,
-              color: Theme.of(context).primaryColor),
+              color: Theme.of(context).colorScheme.primary),
         ),
       ])),
       const SizedBox(height: 8),
@@ -41,14 +47,19 @@ class _MyAppState extends State<MyApp> {
         style: TextStyle(fontFamily: "Graphik", fontSize: 20),
       ),
       const SizedBox(height: 8),
-      TextButton(
-        onPressed: () {
-          setState(() {
-            investorMode = true;
-          });
-        },
-        child: const Text("Join the list"),
-      ),
+      if (kIsWeb)
+        Column(
+          children: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  investorMode = true;
+                });
+              },
+              child: const Text("Join the list"),
+            ),
+          ],
+        ),
       const SizedBox(height: 16),
       const InvestorsList(),
       const SizedBox(height: 50),
@@ -77,7 +88,7 @@ class _MyAppState extends State<MyApp> {
       const SizedBox(height: 16),
       TextButton(
         onPressed: () {
-          connect(twitterController.text);
+          connectWeb3(twitterController.text);
         },
         style: TextButton.styleFrom(
             padding: const EdgeInsets.all(16),
@@ -94,7 +105,9 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Zeroin',
-        theme: ThemeData.light(),
+        theme: ThemeData.light().copyWith(
+            colorScheme: const ColorScheme.light(
+                primary: Color(0xFF03A9F4), secondary: Color(0xFFFF5722))),
         home: Scaffold(
             body: SingleChildScrollView(
           child: Container(
